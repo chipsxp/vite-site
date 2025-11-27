@@ -1,0 +1,81 @@
+export interface Publisher {
+  name: string;
+  location: string;
+}
+
+export interface Availability {
+  format: string;
+  stock: number;
+}
+
+export interface Rating {
+  average: number;
+  count: number;
+}
+
+export interface Book {
+  id: string;
+  title: string;
+  authors: string[];
+  publishedYear: number;
+  genres: string[];
+  isbn: string;
+  pages: number;
+  language: string;
+  publisher: Publisher;
+  availability: Availability;
+  rating: Rating;
+}
+
+export interface BookDatabase {
+  books: Book[];
+}
+
+export const bookDatabase: BookDatabase = {
+  books: [
+    {
+      id: "bk-001",
+      title: "The Silent Archive",
+      authors: ["Riley Chen"],
+      publishedYear: 2019,
+      genres: ["Mystery", "Historical"],
+      isbn: "978-1-55555-010-2",
+      pages: 384,
+      language: "en",
+      publisher: {
+        name: "Northwind Press",
+        location: "Seattle, USA",
+      },
+      availability: {
+        format: "hardcover",
+        stock: 18,
+      },
+      rating: {
+        average: 4.3,
+        count: 214,
+      },
+    },
+    {
+      id: "bk-002",
+      title: "Algorithms of the Sea",
+      authors: ["Marina Iqbal", "Jonas Richter"],
+      publishedYear: 2023,
+      genres: ["Science Fiction"],
+      isbn: "978-1-55555-011-9",
+      pages: 296,
+      language: "en",
+      publisher: {
+        name: "Azure Reef Publishing",
+        location: "Sydney, Australia",
+      },
+      availability: {
+        format: "ebook",
+        stock: 999,
+      },
+      rating: {
+        average: 4.8,
+        count: 87,
+      },
+    },
+  ],
+};

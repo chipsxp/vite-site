@@ -57,4 +57,9 @@ Then open the printed local URL (typically `http://localhost:5173`). The ADE wor
 - **ADE Parse Failures** – Ensure the uploaded file is a PDF and under the Landing.ai size limits. The proxy defined in `vite.config.ts` forwards `/api/ade/*` to `https://api.va.landing.ai`.
 - **Local Asset 404s** – Verify the documents still live under `public/Deep Machine Learning` and that paths in `books.json` match exactly (URL-encoded spaces).
 
+## For Detailed Research Information
+
+- **Refer to STEP1_WORKFLOW.md** - Parse → Markdown → Extract → Export Pipeline
+- **Also refer to STEP2 ENHANCED_UI.md** - Complete document parsing and metadata extraction application using Landing.ai's ADE (Advanced Document Extraction) API.
+
 With those pieces in place, you can iterate strictly via the dev server, swap in new PDFs, and observe how ADE parses and extracts structured book metadata.

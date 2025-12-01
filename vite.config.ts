@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   const authHeaders = adeApiKey ? { Authorization: `Bearer ${adeApiKey}` } : {};
 
   return {
-    plugins: [react()],
+    plugins: [react()],  
     server: {
       proxy: {
         "/api/ade/parse": {

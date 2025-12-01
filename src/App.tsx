@@ -2,13 +2,13 @@ import { useState, useMemo } from "react";
 import LandingAIADE from "landingai-ade";
 import { bookDatabase } from "./data/books";
 import PdfExtractionWorkflow from "./components/PdfExtractionWorkflow";
+import BookLibrary from "./components/BookLibrary";
+import type { Book } from "./schema/books";
 import "./App.css";
 
 function App() {
   const [books] = useState(bookDatabase.books);
-  const [selectedBook, setSelectedBook] = useState<
-    (typeof bookDatabase.books)[0] | null
-  >(null);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
   // Check API key availability outside of effect
   const apiKey = import.meta.env.VITE_VISION_AGENT_API_KEY;
@@ -60,69 +60,90 @@ function App() {
       )}
 
       <div className="content-container">
-        <section className="books-section">
-          <h2>Book Collection</h2>
-          <div className="books-grid">
-            {books.map((book) => (
-              <div
-                key={book.id}
-                className={`book-card ${
-                  selectedBook?.id === book.id ? "selected" : ""
-                }`}
-                onClick={() => setSelectedBook(book)}
-              >
-                <h3>{book.title}</h3>
-                <p className="authors">{book.authors.join(", ")}</p>
-                <p className="year">{book.publishedYear}</p>
-                <div className="genres">
-                  {book.genres.map((genre, idx) => (
-                    <span key={idx} className="genre-tag">
+        <BookLibrary
+          books={books}
+          onSelectBook={setSelectedBook}
+          selectedBookId={selectedBook?.id}
+        />
+
+        {selectedBook && (
+          <section className="book-details-enhanced">
+            <h2>📖 Book Details</h2>
+            <div className="details-content">
+              <h3>{selectedBook.title}</h3>
+              <p className="book-subtitle">
+                By {selectedBook.authors.join(", ")}
+              </p>
+
+              <div className="detail-grid">
+                <div className="detail-item">
+                  <span className="detail-label">📅 Published</span>
+                  <span className="detail-value">
+                    {selectedBook.publishedYear}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">🏢 Publisher</span>
+                  <span className="detail-value">
+                    {selectedBook.publisher.name}
+                    {selectedBook.publisher.location && (
+                      <small> ({selectedBook.publisher.location})</small>
+                    )}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">📚 ISBN</span>
+                  <span className="detail-value">{selectedBook.isbn}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">📄 Pages</span>
+                  <span className="detail-value">{selectedBook.pages}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">🌍 Language</span>
+                  <span className="detail-value">{selectedBook.language}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">📦 Format</span>
+                  <span className="detail-value">
+                    {selectedBook.availability.format}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">🏪 Stock</span>
+                  <span
+                    className={`detail-value stock-indicator ${
+                      selectedBook.availability.stock === 0
+                        ? "out"
+                        : selectedBook.availability.stock <= 5
+                        ? "low"
+                        : "in"
+                    }`}
+                  >
+                    {selectedBook.availability.stock === 0
+                      ? "Out of Stock"
+                      : `${selectedBook.availability.stock} available`}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">⭐ Rating</span>
+                  <span className="detail-value">
+                    {selectedBook.rating.average.toFixed(1)}/5.0
+                    <small> ({selectedBook.rating.count} reviews)</small>
+                  </span>
+                </div>
+              </div>
+
+              <div className="detail-genres">
+                <strong>Genres:</strong>
+                <div className="genres-list">
+                  {selectedBook.genres.map((genre, idx) => (
+                    <span key={idx} className="genre-badge">
                       {genre}
                     </span>
                   ))}
                 </div>
-                {book.pdfUrl && (
-                  <span className="pdf-available">📄 PDF Available</span>
-                )}
               </div>
-            ))}
-          </div>
-        </section>
-
-        {selectedBook && (
-          <section className="book-details">
-            <h2>Book Details</h2>
-            <div className="details-content">
-              <h3>{selectedBook.title}</h3>
-              <p>
-                <strong>Authors:</strong> {selectedBook.authors.join(", ")}
-              </p>
-              <p>
-                <strong>Published:</strong> {selectedBook.publishedYear}
-              </p>
-              <p>
-                <strong>Publisher:</strong> {selectedBook.publisher.name} (
-                {selectedBook.publisher.location})
-              </p>
-              <p>
-                <strong>ISBN:</strong> {selectedBook.isbn}
-              </p>
-              <p>
-                <strong>Pages:</strong> {selectedBook.pages}
-              </p>
-              <p>
-                <strong>Language:</strong> {selectedBook.language}
-              </p>
-              <p>
-                <strong>Format:</strong> {selectedBook.availability.format}
-              </p>
-              <p>
-                <strong>Stock:</strong> {selectedBook.availability.stock}
-              </p>
-              <p>
-                <strong>Rating:</strong> {selectedBook.rating.average}/5 (
-                {selectedBook.rating.count} reviews)
-              </p>
 
               {selectedBook.pdfUrl && (
                 <div className="pdf-section">
@@ -130,12 +151,19 @@ function App() {
                     href={selectedBook.pdfUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="pdf-link"
+                    className="pdf-download-btn"
                   >
                     📥 Download PDF from Project Gutenberg
                   </a>
                 </div>
               )}
+
+              <button
+                className="close-details-btn"
+                onClick={() => setSelectedBook(null)}
+              >
+                ✕ Close Details
+              </button>
             </div>
           </section>
         )}
